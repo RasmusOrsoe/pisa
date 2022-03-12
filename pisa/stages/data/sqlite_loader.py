@@ -9,7 +9,7 @@ from pisa.utils import vectorizer
 from pisa.utils.resources import find_resource
 from pisa.utils.profiler import profile
 from pisa.core.container import Container
-
+from scipy.special import expit
 
 class sqlite_loader(Stage):
     """
