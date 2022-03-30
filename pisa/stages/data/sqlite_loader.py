@@ -75,9 +75,19 @@ class sqlite_loader(Stage):
                 query = 'SELECT * FROM reconstruction WHERE event_no in %s'%(str(tuple(truth['event_no'])))
                 reco = pd.read_sql(query,con).sort_values('event_no').reset_index(drop = True)
             # Get number of i3 files with specified PID by counting unique combinations of RunID and SubrunID
-            query = 'SELECT DISTINCT RunID, SubrunID FROM truth WHERE pid = %s'%pid
+            query = 'SELECT DISTINCT RunID, SubrunID FROM truth WHERE pid = %s and event_no in %s'%(pid, str(tuple(truth['event_no'])))
             n_files = len(pd.read_sql(query,con))
+        
+        #if self.post_fix == '_retro':
         return truth, reco, n_files
+        #else:
+        #    m = int(len(truth)/2)
+        #    reco_sliced = reco.nlargest(m, 'zenith_kappa')
+        #    truth_sliced = truth.iloc[reco_sliced.index]
+        #    with sqlite3.connect(self.database) as con:
+        #        query = 'SELECT DISTINCT RunID, SubrunID FROM truth WHERE pid = %s and event_no in %s'%(pid, str(tuple(truth_sliced['event_no'])))
+        #        n_files = len(pd.read_sql(query,con))
+        #    return truth_sliced.reset_index(drop = True), reco_sliced.reset_index(drop = True), n_files
 
     def add_truth(self, container, truth, nubar, flavor):
         ''' Adds truth to container'''
